@@ -5,6 +5,7 @@
   padding: 20px;
 }
 
+/* Menu Layout */
 .menu {
   display: flex;
   flex-direction: column;
@@ -44,6 +45,10 @@ button:hover {
   gap: 15px;
   border-bottom: 1px solid #ddd;
   z-index: 1000;
+
+  /* Allow horizontal scrolling on small screens */
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 /* Links in navbar */
@@ -79,4 +84,67 @@ html {
 /* Category section spacing */
 .category-section {
   margin-top: 50px;
+}
+
+/* --- Mobile Responsiveness --- */
+
+/* For small screens (phones, 600px and below) */
+@media (max-width: 600px) {
+  /* Adjust category navbar for smaller screens */
+  .category-navbar {
+    padding: 8px;
+    gap: 10px; /* Smaller gap for smaller screens */
+  }
+
+  /* Make navbar links smaller */
+  .nav-link {
+    font-size: 14px; /* Smaller text for mobile */
+  }
+
+  /* Cart button: smaller padding */
+  .cart-button {
+    padding: 4px 10px;
+    font-size: 14px;
+  }
+
+  /* Make menu items stack neatly */
+  .menu {
+    padding-left: 10px;  /* Add some left padding */
+  }
+
+  .menu-item {
+    margin-bottom: 15px;  /* Reduce margin between items */
+  }
+
+  /* Add some padding inside menu items for better touch targets */
+  button {
+    padding: 12px;
+    font-size: 14px;
+  }
+}
+
+/* Larger tablets (600px - 1024px) */
+@media (max-width: 1024px) and (min-width: 600px) {
+  .category-navbar {
+    padding: 12px;
+    gap: 15px;  /* Standard gap */
+  }
+
+  .nav-link {
+    font-size: 16px;
+  }
+
+  .cart-button {
+    padding: 6px 12px;
+  }
+}
+
+/* --- Fixed Cart Button at the Top-Right Corner --- */
+
+/* Position the cart button fixed at top-right */
+.cart-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1001;  /* Ensure it stays on top of other elements */
 }
