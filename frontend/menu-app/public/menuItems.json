@@ -1,0 +1,142 @@
+[
+    {
+        "id": 1,
+        "category": "Appetizers",
+        "name": "Cheese Nachos",
+        "description": "Crispy nachos with cheese",
+        "price": 7.99
+    },
+    {
+        "id": 2,
+        "category": "Appetizers",
+        "name": "Spring Rolls",
+        "description": "Vegetable spring rolls",
+        "price": 5.99
+    },
+    {
+        "id": 3,
+        "category": "Main Courses",
+        "name": "Grilled Chicken",
+        "description": "Tender grilled chicken with sides",
+        "price": 14.99
+    },
+    {
+        "id": 4,
+        "category": "Main Courses",
+        "name": "Beef Steak",
+        "description": "Juicy beef steak with mashed potatoes",
+        "price": 19.99
+    },
+    {
+        "id": 5,
+        "category": "Drinks",
+        "name": "Coke",
+        "description": "Refreshing Coca-Cola",
+        "price": 1.99
+    },
+    {
+        "id": 6,
+        "category": "Drinks",
+        "name": "Lemonade",
+        "description": "Freshly squeezed lemonade",
+        "price": 2.49
+    },
+    {
+        "id": 7,
+        "category": "Desserts",
+        "name": "Chocolate Cake",
+        "description": "Rich chocolate layered cake",
+        "price": 6.49
+    },
+    {
+        "id": 8,
+        "category": "Desserts",
+        "name": "Ice Cream Sundae",
+        "description": "Vanilla ice cream with toppings",
+        "price": 4.99
+    },
+    {
+        "id": 9,
+        "category": "Salads",
+        "name": "Caesar Salad",
+        "description": "Classic Caesar with croutons",
+        "price": 8.99
+    },
+    {
+        "id": 10,
+        "category": "Salads",
+        "name": "Greek Salad",
+        "description": "Fresh salad with feta cheese",
+        "price": 7.49
+    },
+    {
+        "id": 11,
+        "category": "Soups",
+        "name": "Tomato Soup",
+        "description": "Creamy tomato basil soup",
+        "price": 5.49
+    },
+    {
+        "id": 12,
+        "category": "Soups",
+        "name": "Chicken Noodle Soup",
+        "description": "Classic comfort soup",
+        "price": 6.49
+    },
+    {
+        "id": 13,
+        "category": "Seafood",
+        "name": "Grilled Salmon",
+        "description": "Salmon filet with lemon butter",
+        "price": 18.99
+    },
+    {
+        "id": 14,
+        "category": "Seafood",
+        "name": "Shrimp Tacos",
+        "description": "Spicy shrimp with avocado",
+        "price": 12.99
+    },
+    {
+        "id": 15,
+        "category": "Pasta",
+        "name": "Spaghetti Bolognese",
+        "description": "Spaghetti with rich meat sauce",
+        "price": 13.49
+    },
+    {
+        "id": 16,
+        "category": "Pasta",
+        "name": "Penne Alfredo",
+        "description": "Creamy Alfredo sauce pasta",
+        "price": 12.49
+    },
+    {
+        "id": 17,
+        "category": "Breakfast",
+        "name": "Pancakes",
+        "description": "Fluffy pancakes with syrup",
+        "price": 9.49
+    },
+    {
+        "id": 18,
+        "category": "Breakfast",
+        "name": "Omelette",
+        "description": "Three-egg omelette with cheese",
+        "price": 8.99
+    },
+    {
+        "id": 19,
+        "category": "Sandwiches",
+        "name": "Club Sandwich",
+        "description": "Turkey, bacon, lettuce, and tomato",
+        "price": 10.99
+    },
+    {
+        "id": 20,
+        "category": "Sandwiches",
+        "name": "Grilled Cheese",
+        "description": "Melted cheese sandwich",
+        "price": 6.99
+    }
+]
