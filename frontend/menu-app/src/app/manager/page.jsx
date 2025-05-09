@@ -6,7 +6,7 @@ import { ChevronLeft, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import OrderCard from "@/components/order-card"
+import ManagerOrderCard from "@/components/manager-order-card"
 import { useOrders } from "@/context/order-context"
 
 export default function ManagerPage() {
@@ -138,7 +138,7 @@ export default function ManagerPage() {
 
           <TabsContent value="all" className="mt-0 space-y-4">
             {tableOrders.length > 0 ? (
-              tableOrders.map((order) => <OrderCard key={order.id} order={order} />)
+              tableOrders.map((order) => <ManagerOrderCard key={order.id} order={order} />)
             ) : (
               <div className="text-center py-8 bg-muted/30 rounded-lg">
                 <p className="text-muted-foreground">No orders found</p>
@@ -151,7 +151,7 @@ export default function ManagerPage() {
               {tableOrders.filter((order) => order.status === status).length > 0 ? (
                 tableOrders
                   .filter((order) => order.status === status)
-                  .map((order) => <OrderCard key={order.id} order={order} />)
+                  .map((order) => <ManagerOrderCard key={order.id} order={order} />)
               ) : (
                 <div className="text-center py-8 bg-muted/30 rounded-lg">
                   <p className="text-muted-foreground">No {status} orders</p>
