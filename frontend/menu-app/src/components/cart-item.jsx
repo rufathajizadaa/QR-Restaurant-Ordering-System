@@ -9,17 +9,17 @@ export default function CartItem({ item }) {
   const { updateQuantity, removeFromCart } = useCart()
 
   const handleIncrement = () => {
-    updateQuantity(item.id, item.quantity + 1)
+    updateQuantity(item.id, item.quantity + 1, item.removedIngredients || [])
   }
 
   const handleDecrement = () => {
     if (item.quantity > 1) {
-      updateQuantity(item.id, item.quantity - 1)
+      updateQuantity(item.id, item.quantity - 1, item.removedIngredients || [])
     }
   }
 
   const handleRemove = () => {
-    removeFromCart(item.id)
+    removeFromCart(item.id, item.removedIngredients || [])
   }
 
   return (
@@ -36,6 +36,9 @@ export default function CartItem({ item }) {
 
       <div className="flex-1 min-w-0">
         <h3 className="font-medium text-base truncate">{item.name}</h3>
+        {item.removedIngredients && item.removedIngredients.length > 0 && (
+          <p className="text-xs text-red-500">No: {item.removedIngredients.join(", ")}</p>
+        )}
         <div className="flex items-center justify-between mt-1">
           <div className="font-medium">${(item.price * item.quantity).toFixed(2)}</div>
           <div className="flex items-center gap-2">
