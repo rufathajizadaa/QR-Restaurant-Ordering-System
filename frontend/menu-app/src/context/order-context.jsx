@@ -72,12 +72,44 @@ export function OrderProvider({ children }) {
     }
   }
 
+  const markTableAsCompleted = async (tableId) => {
+    try {
+      const response = await fetch(`/api/orders/table/${tableId}/complete`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (response.ok) {
+        const updatedOrders = await response.json()
+        setOrders((prevOrders) =>
+          prevOrders.map((order) => {
+            if (order.tableId === tableId) {
+              return { ...order, status: "completed" }
+            }
+            return order
+          }),
+        )
+        return updatedOrders
+      } else {
+        console.error("Failed to mark table as completed")
+      }
+    } catch (error) {
+      console.error("Error marking table as completed:", error)
+    }
+  }
+
   const getOrdersByStatus = (status) => {
     return orders.filter((order) => order.status === status)
   }
 
   const getOrdersByTable = (tableId) => {
     return orders.filter((order) => order.tableId === tableId)
+  }
+
+  const getActiveOrdersByTable = (tableId) => {
+    return orders.filter((order) => order.tableId === tableId && order.status !== "completed")
   }
 
   return (
@@ -87,8 +119,10 @@ export function OrderProvider({ children }) {
         loading,
         addOrder,
         updateOrderStatus,
+        markTableAsCompleted,
         getOrdersByStatus,
         getOrdersByTable,
+        getActiveOrdersByTable,
       }}
     >
       {children}
