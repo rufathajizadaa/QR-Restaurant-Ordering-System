@@ -29,7 +29,7 @@ public class Order {
     @JsonManagedReference
     private List<OrderItem> items;
 
-    @Version  // Added version field for optimistic locking
+    @Version  // Added version field for optimistic locking, fix the error the issue
     @Column(name = "version")
     private Integer version;
 
