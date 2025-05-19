@@ -21,13 +21,13 @@ public class IngredientController {
         this.ingredientService = ingredientService;
     }
 
-    // Get all ingredients
+    // Get all ingredients , Getmapping
     @GetMapping
     public List<Ingredient> getAllIngredients() {
         return ingredientService.getAllIngredients();
     }
 
-    // Get ingredient by ID
+    // Get ingredient by ID, using PathVariable
     @GetMapping("/{id}")
     public ResponseEntity<Ingredient> getIngredientById(@PathVariable Long id) {
         Optional<Ingredient> ingredient = ingredientService.getIngredientById(id);
