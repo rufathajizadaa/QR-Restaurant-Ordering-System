@@ -51,6 +51,16 @@ public class OrderController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PatchMapping("/table/{tableId}/complete")
+    public ResponseEntity<Void> completeOrdersByTableId(@PathVariable Long tableId) {
+        boolean updated = orderService.completeOrdersByTableId(tableId);
+        if (updated) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     // Delete an order
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {

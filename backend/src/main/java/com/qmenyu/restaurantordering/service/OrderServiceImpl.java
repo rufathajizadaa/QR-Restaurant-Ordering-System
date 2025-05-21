@@ -53,6 +53,22 @@ public class OrderServiceImpl implements OrderService {
         return optionalOrder;
     }
 
+    public boolean completeOrdersByTableId(Long tableId) {
+        List<Order> orders = orderRepository.findByTableIdAndStatusNot(tableId, "completed");
+
+        if (orders.isEmpty()) {
+            return false;
+        }
+
+        for (Order order : orders) {
+            order.setStatus("completed");
+        }
+
+        orderRepository.saveAll(orders);
+        return true;
+    }
+
+
     @Override
     public boolean deleteOrder(Long id) {
         if (orderRepository.existsById(id)) {

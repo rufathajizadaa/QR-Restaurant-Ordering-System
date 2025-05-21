@@ -30,13 +30,22 @@ export function OrderProvider({ children }) {
     fetchOrders()
   }, [])
 
+  // Update the addOrder function to match the expected JSON format
   const addOrder = async (orderData) => {
     try {
+
+      const now = new Date();
+
+      // Add 4 hours (Baku is UTC+4)
+      const bakuTime = new Date(now.getTime() + 4 * 60 * 60 * 1000);
+    
       // Format the order data according to the expected structure
       const newOrder = {
         tableId: orderData.tableId,
         total: orderData.total,
+        createdAt: new Date().toISOString(),
         status: "pending",
+        createdAt: bakuTime.toISOString(),
         items: orderData.items.map((item) => ({
           itemId: item.itemId,
           name: item.name,
@@ -45,6 +54,8 @@ export function OrderProvider({ children }) {
           removedIngredients: item.removedIngredients,
         })),
       }
+
+      console.log("Sending order data:", newOrder)
 
       const response = await axios.post("http://localhost:8080/api/orders", newOrder)
 
@@ -61,9 +72,14 @@ export function OrderProvider({ children }) {
     }
   }
 
+  // Update the updateOrderStatus function to use the correct URL format with query parameters
   const updateOrderStatus = async (orderId, status) => {
     try {
-      const response = await axios.patch(`http://localhost:8080/api/orders/${orderId}`, { status })
+      // Use the correct URL format with status as a query parameter
+      const url = `http://localhost:8080/api/orders/${orderId}/status?status=${status}`
+      console.log("Updating order status:", url)
+
+      const response = await axios.patch(url)
 
       if (response.status === 200) {
         // Refresh orders after updating status

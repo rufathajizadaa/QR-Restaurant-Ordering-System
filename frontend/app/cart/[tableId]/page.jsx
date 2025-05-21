@@ -21,6 +21,7 @@ export default function CartPage({ params }) {
 
   const cartItems = getTableCart(tableId)
 
+  // Update the handlePlaceOrder function to ensure proper order data format
   const handlePlaceOrder = async () => {
     if (cartItems.length === 0) {
       toast({
@@ -34,9 +35,10 @@ export default function CartPage({ params }) {
     setIsSubmitting(true)
 
     try {
-      // Create order from cart items
+      // Create order from cart items with the correct format
       await addOrder({
         tableId: tableId,
+        total: getTotalPrice(tableId),
         items: cartItems.map((item) => ({
           itemId: item.id,
           name: item.name,
@@ -44,7 +46,6 @@ export default function CartPage({ params }) {
           price: item.price,
           removedIngredients: item.removedIngredients,
         })),
-        total: getTotalPrice(tableId),
       })
 
       // Clear cart
@@ -59,6 +60,7 @@ export default function CartPage({ params }) {
       // Redirect to menu
       router.push(`/menu/${tableId}`)
     } catch (error) {
+      console.error("Error placing order:", error)
       toast({
         title: "Error placing order",
         description: "There was a problem placing your order. Please try again.",

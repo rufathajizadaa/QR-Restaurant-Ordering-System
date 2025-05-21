@@ -10,5 +10,6 @@ public interface OrderService {
     Optional<Order> getOrderById(Long id);
     Order createOrder(Order order);
     Optional<Order> updateOrderStatus(Long id, String status);
+    public boolean completeOrdersByTableId(Long tableId);
     boolean deleteOrder(Long id);
 }

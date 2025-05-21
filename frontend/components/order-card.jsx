@@ -52,7 +52,10 @@ export default function OrderCard({ order, onStatusChange, availableActions = []
           {availableActions.map((status) => (
             <Button
               key={status}
-              onClick={() => onStatusChange(order.id, status)}
+              onClick={() => {
+                console.log(`Changing order ${order.id} status to ${status}`)
+                onStatusChange(order.id, status)
+              }}
               variant={status === "preparing" ? "default" : status === "ready" ? "secondary" : "outline"}
               size="sm"
             >

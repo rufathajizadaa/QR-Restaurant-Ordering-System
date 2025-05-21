@@ -55,6 +55,16 @@ export default function WaiterPage() {
     await markTableAsCompleted(tableId)
   }
 
+  // Add console logging to debug status updates
+  const handleStatusChange = async (orderId, newStatus) => {
+    console.log(`Waiter: Updating order ${orderId} to status ${newStatus}`)
+    try {
+      await updateOrderStatus(orderId, newStatus)
+    } catch (error) {
+      console.error("Failed to update order status:", error)
+    }
+  }
+
   return (
     <div className="container mx-auto px-4 py-6 max-w-4xl">
       <div className="flex items-center justify-between gap-4 mb-6">
@@ -108,7 +118,7 @@ export default function WaiterPage() {
                 <OrderCard
                   key={order.id}
                   order={order}
-                  onStatusChange={updateOrderStatus}
+                  onStatusChange={handleStatusChange}
                   availableActions={["delivered"]}
                 />
               ))}
