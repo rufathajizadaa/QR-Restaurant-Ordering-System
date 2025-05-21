@@ -6,40 +6,71 @@ const CartContext = createContext(undefined)
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState([])
+  const [tableItems, setTableItems] = useState({})
 
   // Load cart from localStorage on initial render
   useEffect(() => {
-    const savedCart = localStorage.getItem("cart")
-    if (savedCart) {
-      try {
-        setItems(JSON.parse(savedCart))
-      } catch (error) {
-        console.error("Failed to parse cart from localStorage:", error)
+    // Load all table carts from localStorage
+    const loadAllTableCarts = () => {
+      const tables = {}
+
+      // Check for any localStorage keys that match our cart pattern
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key && key.startsWith("cart-table-")) {
+          try {
+            const tableId = Number.parseInt(key.replace("cart-table-", ""), 10)
+            const tableCart = JSON.parse(localStorage.getItem(key) || "[]")
+            tables[tableId] = tableCart
+          } catch (error) {
+            console.error(`Failed to parse cart for key ${key}:`, error)
+          }
+        }
       }
+
+      setTableItems(tables)
     }
+
+    loadAllTableCarts()
   }, [])
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(items))
-  }, [items])
+    // Save all table carts to localStorage
+    Object.entries(tableItems).forEach(([tableId, items]) => {
+      localStorage.setItem(`cart-table-${tableId}`, JSON.stringify(items))
+    })
+  }, [tableItems])
 
-  const addToCart = (item, quantity, removedIngredients = [], removedIngredientIds = []) => {
-    setItems((prevItems) => {
+  const getTableCart = (tableId) => {
+    return tableItems[tableId] || []
+  }
+
+  const addToCart = (item, quantity, removedIngredients = [], removedIngredientIds = [], tableId) => {
+    if (!tableId) {
+      console.error("Table ID is required to add items to cart")
+      return
+    }
+
+    setTableItems((prevTableItems) => {
+      const currentTableItems = prevTableItems[tableId] || []
+
       // Check if this exact item with same customization exists
-      const existingItemIndex = prevItems.findIndex(
+      const existingItemIndex = currentTableItems.findIndex(
         (i) => i.id === item.id && JSON.stringify(i.removedIngredients || []) === JSON.stringify(removedIngredients),
       )
 
+      let updatedTableItems
+
       if (existingItemIndex >= 0) {
         // Update existing item
-        return prevItems.map((i, index) =>
+        updatedTableItems = currentTableItems.map((i, index) =>
           index === existingItemIndex ? { ...i, quantity: i.quantity + quantity } : i,
         )
       } else {
         // Add new item with customization
-        return [
-          ...prevItems,
+        updatedTableItems = [
+          ...currentTableItems,
           {
             ...item,
             quantity,
@@ -48,12 +79,24 @@ export function CartProvider({ children }) {
           },
         ]
       }
+
+      return {
+        ...prevTableItems,
+        [tableId]: updatedTableItems,
+      }
     })
   }
 
-  const removeFromCart = (itemId, removedIngredients = []) => {
-    setItems((prevItems) =>
-      prevItems.filter((item) => {
+  const removeFromCart = (itemId, removedIngredients = [], tableId) => {
+    if (!tableId) {
+      console.error("Table ID is required to remove items from cart")
+      return
+    }
+
+    setTableItems((prevTableItems) => {
+      const currentTableItems = prevTableItems[tableId] || []
+
+      const updatedTableItems = currentTableItems.filter((item) => {
         // If we're looking for an item with specific customizations
         if (removedIngredients && removedIngredients.length > 0) {
           return !(
@@ -65,18 +108,30 @@ export function CartProvider({ children }) {
           return !(item.id === itemId && (!item.removedIngredients || item.removedIngredients.length === 0))
         }
         return true
-      }),
-    )
+      })
+
+      return {
+        ...prevTableItems,
+        [tableId]: updatedTableItems,
+      }
+    })
   }
 
-  const updateQuantity = (itemId, quantity, removedIngredients = []) => {
-    if (quantity <= 0) {
-      removeFromCart(itemId, removedIngredients)
+  const updateQuantity = (itemId, quantity, removedIngredients = [], tableId) => {
+    if (!tableId) {
+      console.error("Table ID is required to update quantity")
       return
     }
 
-    setItems((prevItems) =>
-      prevItems.map((item) => {
+    if (quantity <= 0) {
+      removeFromCart(itemId, removedIngredients, tableId)
+      return
+    }
+
+    setTableItems((prevTableItems) => {
+      const currentTableItems = prevTableItems[tableId] || []
+
+      const updatedTableItems = currentTableItems.map((item) => {
         // Check if this is the item with the specific customization
         if (item.id === itemId) {
           // For items with customization
@@ -92,26 +147,50 @@ export function CartProvider({ children }) {
           }
         }
         return item
-      }),
-    )
+      })
+
+      return {
+        ...prevTableItems,
+        [tableId]: updatedTableItems,
+      }
+    })
   }
 
-  const clearCart = () => {
-    setItems([])
+  const clearCart = (tableId) => {
+    if (!tableId) {
+      console.error("Table ID is required to clear cart")
+      return
+    }
+
+    setTableItems((prevTableItems) => ({
+      ...prevTableItems,
+      [tableId]: [],
+    }))
   }
 
-  const getTotalPrice = () => {
-    return items.reduce((total, item) => total + item.price * item.quantity, 0)
+  const getTotalPrice = (tableId) => {
+    if (!tableId) {
+      return 0
+    }
+
+    const tableCart = tableItems[tableId] || []
+    return tableCart.reduce((total, item) => total + item.price * item.quantity, 0)
   }
 
-  const getTotalItems = () => {
-    return items.reduce((total, item) => total + item.quantity, 0)
+  const getTotalItems = (tableId) => {
+    if (!tableId) {
+      return 0
+    }
+
+    const tableCart = tableItems[tableId] || []
+    return tableCart.reduce((total, item) => total + item.quantity, 0)
   }
 
   return (
     <CartContext.Provider
       value={{
-        items,
+        items: tableItems,
+        getTableCart,
         addToCart,
         removeFromCart,
         updateQuantity,

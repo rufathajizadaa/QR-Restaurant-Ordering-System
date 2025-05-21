@@ -13,14 +13,16 @@ import { useRouter } from "next/navigation"
 
 export default function CartPage({ params }) {
   const tableId = Number.parseInt(params.tableId, 10)
-  const { items, getTotalPrice, clearCart } = useCart()
+  const { getTableCart, getTotalPrice, clearCart } = useCart()
   const { addOrder } = useOrders()
   const { toast } = useToast()
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const cartItems = getTableCart(tableId)
+
   const handlePlaceOrder = async () => {
-    if (items.length === 0) {
+    if (cartItems.length === 0) {
       toast({
         title: "Cart is empty",
         description: "Please add items to your cart before placing an order.",
@@ -35,18 +37,18 @@ export default function CartPage({ params }) {
       // Create order from cart items
       await addOrder({
         tableId: tableId,
-        items: items.map((item) => ({
+        items: cartItems.map((item) => ({
           itemId: item.id,
           name: item.name,
           quantity: item.quantity,
           price: item.price,
           removedIngredients: item.removedIngredients,
         })),
-        total: getTotalPrice(),
+        total: getTotalPrice(tableId),
       })
 
       // Clear cart
-      clearCart()
+      clearCart(tableId)
 
       // Show success message
       toast({
@@ -78,18 +80,18 @@ export default function CartPage({ params }) {
           </Link>
           <h1 className="text-xl font-bold">Your Cart - Table {tableId}</h1>
         </div>
-        {items.length > 0 && (
-          <Button variant="outline" size="sm" className="text-destructive" onClick={clearCart}>
+        {cartItems.length > 0 && (
+          <Button variant="outline" size="sm" className="text-destructive" onClick={() => clearCart(tableId)}>
             <Trash2 className="h-4 w-4 mr-2" />
             Clear All
           </Button>
         )}
       </div>
 
-      {items.length > 0 ? (
+      {cartItems.length > 0 ? (
         <>
           <div className="space-y-1 mb-4">
-            {items.map((item, index) => (
+            {cartItems.map((item, index) => (
               <CartItem key={`${item.id}-${index}`} item={item} />
             ))}
           </div>
@@ -99,11 +101,11 @@ export default function CartPage({ params }) {
           <div className="space-y-2">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span>${getTotalPrice().toFixed(2)}</span>
+              <span>${getTotalPrice(tableId).toFixed(2)}</span>
             </div>
             <div className="flex justify-between font-medium text-lg">
               <span>Total</span>
-              <span>${getTotalPrice().toFixed(2)}</span>
+              <span>${getTotalPrice(tableId).toFixed(2)}</span>
             </div>
           </div>
 

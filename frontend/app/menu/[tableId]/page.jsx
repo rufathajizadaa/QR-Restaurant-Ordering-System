@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import axios from "axios"
-import { ShoppingCart, ChevronLeft, Clock, RefreshCw } from "lucide-react"
+import { ShoppingCart, ChevronLeft, Clock, RefreshCw, UserCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
@@ -13,6 +13,7 @@ import OrderStatusBadge from "@/components/order-status-badge"
 import { useCart } from "@/context/cart-context"
 import { useOrders } from "@/context/order-context"
 import { useParams } from "next/navigation"
+import LoginDialog from "@/components/login-dialog"
 
 export default function MenuPage() {
   // Use the useParams hook to get the tableId
@@ -27,6 +28,7 @@ export default function MenuPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [refreshing, setRefreshing] = useState(false)
+  const [loginOpen, setLoginOpen] = useState(false)
   const categoryRefs = useRef({})
 
   // Fetch menu items from the API
@@ -90,6 +92,12 @@ export default function MenuPage() {
 
   return (
     <div className="mobile-container pb-20">
+      {/* Restaurant name centered at the top */}
+      <div className="text-center mb-2">
+        <h1 className="text-xl font-bold">McDonald's</h1>
+      </div>
+
+      {/* Table ID and action buttons in a separate row */}
       <div className="flex items-center justify-between gap-2 mb-4">
         <div className="flex items-center gap-2">
           <Link href="/">
@@ -97,9 +105,12 @@ export default function MenuPage() {
               <ChevronLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <h1 className="text-xl font-bold truncate">McDonald's - Table {tableId}</h1>
+          <h2 className="text-lg font-medium">Table {tableId}</h2>
         </div>
         <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" onClick={() => setLoginOpen(true)}>
+            <UserCircle className="h-5 w-5" />
+          </Button>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="sm" className="h-9 px-2">
@@ -158,9 +169,9 @@ export default function MenuPage() {
             <Button className="relative">
               <ShoppingCart className="h-5 w-5 mr-2" />
               Cart
-              {getTotalItems() > 0 && (
+              {getTotalItems(tableId) > 0 && (
                 <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center">
-                  {getTotalItems()}
+                  {getTotalItems(tableId)}
                 </Badge>
               )}
             </Button>
@@ -219,6 +230,9 @@ export default function MenuPage() {
           </div>
         </>
       )}
+
+      {/* Login Dialog */}
+      <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
     </div>
   )
 }

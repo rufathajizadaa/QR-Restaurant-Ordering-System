@@ -4,22 +4,25 @@ import Image from "next/image"
 import { Minus, Plus, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/context/cart-context"
+import { useParams } from "next/navigation"
 
 export default function CartItem({ item }) {
+  const params = useParams()
+  const tableId = Number.parseInt(params.tableId, 10)
   const { updateQuantity, removeFromCart } = useCart()
 
   const handleIncrement = () => {
-    updateQuantity(item.id, item.quantity + 1, item.removedIngredients || [])
+    updateQuantity(item.id, item.quantity + 1, item.removedIngredients || [], tableId)
   }
 
   const handleDecrement = () => {
     if (item.quantity > 1) {
-      updateQuantity(item.id, item.quantity - 1, item.removedIngredients || [])
+      updateQuantity(item.id, item.quantity - 1, item.removedIngredients || [], tableId)
     }
   }
 
   const handleRemove = () => {
-    removeFromCart(item.id, item.removedIngredients || [])
+    removeFromCart(item.id, item.removedIngredients || [], tableId)
   }
 
   // Ensure we have a valid image URL or use a placeholder

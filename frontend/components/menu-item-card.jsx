@@ -51,7 +51,7 @@ export default function MenuItemCard({ item, tableId }) {
   // This is for adding directly from the menu page (without customization)
   const handleAddToCart = () => {
     // When adding directly, explicitly use an empty array for removedIngredients
-    addToCart(item, quantity, [])
+    addToCart(item, quantity, [], [], tableId)
     setQuantity(1)
   }
 
@@ -69,7 +69,7 @@ export default function MenuItemCard({ item, tableId }) {
 
     // Add the item to cart with customization info
     // We store both the IDs (for backend) and names (for display)
-    addToCart(item, quantity, removedIngredientNames, removedIngredientIds)
+    addToCart(item, quantity, removedIngredientNames, removedIngredientIds, tableId)
     setQuantity(1)
     setIsDialogOpen(false)
   }
