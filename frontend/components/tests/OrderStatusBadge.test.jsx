@@ -16,18 +16,14 @@ describe('OrderStatusBadge', () => {
       render(<OrderStatusBadge status={key} />)
       const badge = screen.getByText(label)
       expect(badge).toBeInTheDocument()
-<<<<<<< HEAD
-      expect(badge).toHaveClass(`status-${key}`)
-=======
 
       if (key === 'completed') {
-        // completed uses explicit gray+white classes
+        // completed uses explicit bg-gray-500 + text-white classes
         expect(badge).toHaveClass('bg-gray-500', 'text-white')
       } else {
-        // others use the helper `status-${key}` class
+        // all others use the tailwind helper class `status-${key}`
         expect(badge).toHaveClass(`status-${key}`)
       }
->>>>>>> 32def5f (Tsetin issues resolved)
     })
   }
 })

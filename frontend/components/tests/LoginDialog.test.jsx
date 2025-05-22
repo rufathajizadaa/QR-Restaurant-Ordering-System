@@ -27,12 +27,8 @@ describe('LoginDialog', () => {
     render(<LoginDialog open={true} onOpenChange={onOpenChange} />)
     expect(screen.getByLabelText(/username/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
-<<<<<<< HEAD
-    expect(screen.getByText(/kitchen staff/i)).toBeInTheDocument()
-=======
     // match both the hidden <option> and the visible <span>
     expect(screen.getAllByText(/kitchen staff/i).length).toBeGreaterThan(0)
->>>>>>> 32def5f (Tsetin issues resolved)
     expect(screen.getByRole('button', { name: /login/i })).toBeEnabled()
   })
 
@@ -46,10 +42,7 @@ describe('LoginDialog', () => {
     })
     fireEvent.click(screen.getByRole('button', { name: /login/i }))
 
-<<<<<<< HEAD
     // advance the 1s simulated login
-=======
->>>>>>> 32def5f (Tsetin issues resolved)
     act(() => {
       jest.advanceTimersByTime(1000)
     })
