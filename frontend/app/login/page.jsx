@@ -1,24 +1,25 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { saveToken } from '../../utils/auth'; // make sure this file exists
 
 export default function LoginPage() {
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [error, setError] = useState('')
-    const router = useRouter()
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const router = useRouter();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
 
         try {
-            const res = await fetch('http://localhost:8080/authenticate', {
+            // Step 1: Authenticate and get JWT token
+            const res = await fetch('http://localhost:8080/api/auth/authenticate', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ username, password }),
-                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password }),
             });
 
             if (!res.ok) {
@@ -28,9 +29,19 @@ export default function LoginPage() {
                 return;
             }
 
-            const meRes = await fetch('http://localhost:8080/api/auth/me', { credentials: 'include' });
-            const contentType = meRes.headers.get('content-type');
-            if (!meRes.ok || !contentType?.includes('application/json')) {
+            const data = await res.json();
+            const token = data.token;
+            saveToken(token);
+
+            // Step 2: Fetch user info using token
+            const meRes = await fetch('http://localhost:8080/api/auth/me', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+
+            if (!meRes.ok) {
                 const errText = await meRes.text();
                 console.error('Error fetching /me:', errText);
                 setError('Login succeeded but failed to load user info.');
@@ -52,7 +63,6 @@ export default function LoginPage() {
             else if (role === 'ROLE_WAITER') router.push('/waiter');
             else if (role === 'ROLE_KITCHEN') router.push('/kitchen');
             else if (role === 'ROLE_GUEST') router.push('/menu');
-
         } catch (err) {
             console.error('Unexpected login error:', err);
             setError('Server error. Please try again later.');
@@ -61,7 +71,6 @@ export default function LoginPage() {
 
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen px-4 bg-gray-50">
-            {/* Go Back Button */}
             <button
                 onClick={() => router.back()}
                 aria-label="Go back"
@@ -104,5 +113,5 @@ export default function LoginPage() {
                 </button>
             </form>
         </div>
-    )
+    );
 }
