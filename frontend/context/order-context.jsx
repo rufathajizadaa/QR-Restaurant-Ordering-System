@@ -30,28 +30,22 @@ export function OrderProvider({ children }) {
     fetchOrders()
   }, [])
 
-  // Update the addOrder function to match the expected JSON format
+  // Update the addOrder function to include removedIngredients in the JSON
   const addOrder = async (orderData) => {
     try {
-
-      const now = new Date();
-
-      // Add 4 hours (Baku is UTC+4)
-      const bakuTime = new Date(now.getTime() + 4 * 60 * 60 * 1000);
-    
       // Format the order data according to the expected structure
       const newOrder = {
         tableId: orderData.tableId,
         total: orderData.total,
         createdAt: new Date().toISOString(),
         status: "pending",
-        createdAt: bakuTime.toISOString(),
         items: orderData.items.map((item) => ({
           itemId: item.itemId,
           name: item.name,
           quantity: item.quantity,
           price: item.price,
-          removedIngredients: item.removedIngredients,
+          // Include removedIngredients in the order data if present
+          removedIngredients: item.removedIngredients || [],
         })),
       }
 

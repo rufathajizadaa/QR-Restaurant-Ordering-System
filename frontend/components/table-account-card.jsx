@@ -104,9 +104,10 @@ export default function TableAccountCard({ tableId, orders, total, onCloseTable 
                         </span>
                         <span className="whitespace-nowrap">${(item.price * item.quantity).toFixed(2)}</span>
                       </div>
+                      {/* Display removed ingredients in the same format as cart page */}
                       {item.removedIngredients && item.removedIngredients.length > 0 && (
                         <div className="text-xs text-red-500 ml-5 truncate">
-                          No: {item.removedIngredients.join(", ")}
+                          no {item.removedIngredients.join(", no ")}
                         </div>
                       )}
                     </li>

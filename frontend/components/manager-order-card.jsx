@@ -65,8 +65,9 @@ export default function ManagerOrderCard({ order }) {
                     </span>
                     <span className="font-medium whitespace-nowrap">${(item.price * item.quantity).toFixed(2)}</span>
                   </div>
+                  {/* Display removed ingredients in the same format as cart page */}
                   {item.removedIngredients && item.removedIngredients.length > 0 && (
-                    <div className="text-xs text-red-500 ml-5 truncate">No: {item.removedIngredients.join(", ")}</div>
+                    <div className="text-xs text-red-500 ml-5 truncate">no {item.removedIngredients.join(", no ")}</div>
                   )}
                 </li>
               ))}

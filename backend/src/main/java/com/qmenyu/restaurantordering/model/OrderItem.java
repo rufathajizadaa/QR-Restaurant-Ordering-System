@@ -2,7 +2,9 @@ package com.qmenyu.restaurantordering.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "order_items")
@@ -12,7 +14,7 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)  // Cascade added
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id", nullable = false)
     @JsonBackReference
     private Order order;
@@ -26,8 +28,12 @@ public class OrderItem {
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false, precision = 10, scale = 2)  // Define precision and scale for the price
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
+
+    // ✅ New field for removed ingredients
+    @Column(name = "removed_ingredients", columnDefinition = "text[]")
+    private List<String> removedIngredients;
 
     // Getters and Setters
     public Long getId() {
@@ -76,5 +82,13 @@ public class OrderItem {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public List<String> getRemovedIngredients() {
+        return removedIngredients;
+    }
+
+    public void setRemovedIngredients(List<String> removedIngredients) {
+        this.removedIngredients = removedIngredients;
     }
 }

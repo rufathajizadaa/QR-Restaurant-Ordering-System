@@ -5,6 +5,7 @@ import com.qmenyu.restaurantordering.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,14 +31,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order createOrder(Order order) {
-        // Ensure the order has a unique ID. You can generate it using a timestamp or another unique generator.
-        // Here, we're using the current time in milliseconds as a unique ID (you can modify this logic as needed).
+        // Ensure the order has a unique ID
         if (order.getId() == null) {
-            order.setId(System.currentTimeMillis()); // or another method of generating unique IDs
+            order.setId(System.currentTimeMillis());
         }
 
         // Set the order items and associate them with the order
-        order.getItems().forEach(item -> item.setOrder(order));
+        order.getItems().forEach(item -> {
+            item.setOrder(order);
+
+            // Ensure removedIngredients is not null
+            if (item.getRemovedIngredients() == null) {
+                item.setRemovedIngredients(Collections.emptyList());
+            }
+        });
 
         // Save the order to the database
         return orderRepository.save(order);
@@ -53,6 +60,7 @@ public class OrderServiceImpl implements OrderService {
         return optionalOrder;
     }
 
+    @Override
     public boolean completeOrdersByTableId(Long tableId) {
         List<Order> orders = orderRepository.findByTableIdAndStatusNot(tableId, "completed");
 
@@ -67,7 +75,6 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.saveAll(orders);
         return true;
     }
-
 
     @Override
     public boolean deleteOrder(Long id) {

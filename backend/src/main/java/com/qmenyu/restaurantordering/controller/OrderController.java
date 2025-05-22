@@ -2,7 +2,6 @@ package com.qmenyu.restaurantordering.controller;
 
 import com.qmenyu.restaurantordering.model.Order;
 import com.qmenyu.restaurantordering.service.OrderService;
-import com.qmenyu.restaurantordering.service.OrderServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +14,9 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-    private final OrderServiceImpl orderServiceImpl;
 
-    public OrderController(OrderService orderService, OrderServiceImpl orderServiceImpl) {
+    public OrderController(OrderService orderService) {
         this.orderService = orderService;
-        this.orderServiceImpl = orderServiceImpl;
     }
 
     // Get all orders
@@ -51,14 +48,11 @@ public class OrderController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Mark all orders for a table as completed
     @PatchMapping("/table/{tableId}/complete")
     public ResponseEntity<Void> completeOrdersByTableId(@PathVariable Long tableId) {
         boolean updated = orderService.completeOrdersByTableId(tableId);
-        if (updated) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return updated ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 
     // Delete an order

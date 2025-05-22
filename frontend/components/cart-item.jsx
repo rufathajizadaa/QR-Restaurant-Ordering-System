@@ -26,7 +26,7 @@ export default function CartItem({ item }) {
   }
 
   // Ensure we have a valid image URL or use a placeholder
-  const imageUrl = item.image || "/placeholder.svg?height=60&width=60"
+  const imageUrl = item.image || item.imageUrl || "/placeholder.svg?height=60&width=60"
 
   return (
     <div className="flex items-center gap-3 py-3 border-b last:border-b-0">
@@ -43,7 +43,7 @@ export default function CartItem({ item }) {
       <div className="flex-1 min-w-0">
         <h3 className="font-medium text-base truncate">{item.name}</h3>
         {item.removedIngredients && item.removedIngredients.length > 0 && (
-          <p className="text-xs text-red-500">No: {item.removedIngredients.join(", ")}</p>
+          <p className="text-xs text-red-500">no {item.removedIngredients.join(", no ")}</p>
         )}
         <div className="flex items-center justify-between mt-1">
           <div className="font-medium">${(item.price * item.quantity).toFixed(2)}</div>

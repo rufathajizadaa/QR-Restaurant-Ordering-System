@@ -108,12 +108,9 @@ export default function MenuPage() {
           <h2 className="text-lg font-medium">Table {tableId}</h2>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/login">
-            <Button variant="ghost" size="icon">
-              <UserCircle className="h-5 w-5" />
-            </Button>
-          </Link>
-
+          <Button variant="ghost" size="icon" onClick={() => setLoginOpen(true)}>
+            <UserCircle className="h-5 w-5" />
+          </Button>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="sm" className="h-9 px-2">
@@ -151,7 +148,9 @@ export default function MenuPage() {
                               <span>${(item.price * item.quantity).toFixed(2)}</span>
                             </div>
                             {item.removedIngredients && item.removedIngredients.length > 0 && (
-                              <div className="text-xs text-red-500 ml-5">No: {item.removedIngredients.join(", ")}</div>
+                              <div className="text-xs text-red-500 ml-5">
+                                no {item.removedIngredients.join(", no ")}
+                              </div>
                             )}
                           </li>
                         ))}
@@ -235,7 +234,7 @@ export default function MenuPage() {
       )}
 
       {/* Login Dialog */}
-      {/*<LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />*/}
+      <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
     </div>
   )
 }
