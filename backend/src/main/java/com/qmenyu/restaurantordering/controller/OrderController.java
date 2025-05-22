@@ -15,12 +15,12 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-    private final OrderServiceImpl orderServiceImpl;
 
-    public OrderController(OrderService orderService, OrderServiceImpl orderServiceImpl) {
+    public OrderController(OrderService orderService) {
         this.orderService = orderService;
-        this.orderServiceImpl = orderServiceImpl;
     }
+
+
 
     // Get all orders
     @GetMapping
