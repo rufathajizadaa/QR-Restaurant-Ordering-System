@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import ManagerOrderCard from "@/components/manager-order-card"
 import { useOrders } from "@/context/order-context"
+import { useRouter } from "next/navigation"
+
 
 export default function ManagerPage() {
   const { orders, loading, refreshOrders } = useOrders()
@@ -79,6 +81,11 @@ export default function ManagerPage() {
               ))}
             </SelectContent>
           </Select>
+          <Link href="/register">
+            <Button variant="default" size="sm" className="whitespace-nowrap">
+              Create Account
+            </Button>
+          </Link>
           <Button
             variant={includeCompleted ? "default" : "outline"}
             size="sm"
