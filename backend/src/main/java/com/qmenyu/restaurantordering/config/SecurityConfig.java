@@ -30,14 +30,10 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register","/menu").permitAll()
-                        .requestMatchers("/kitchen").hasAnyRole("KITCHEN", "ADMIN")
-                        .requestMatchers("/manager").hasAnyRole("ADMIN")
-                        .requestMatchers("/waiter").hasAnyRole("WAITER", "ADMIN")
+                        .requestMatchers("/login", "/register").permitAll()
                         .requestMatchers("/me").authenticated()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
-
                 .formLogin(form -> form
                         .loginProcessingUrl("/authenticate")
                         .successHandler(successHandler)

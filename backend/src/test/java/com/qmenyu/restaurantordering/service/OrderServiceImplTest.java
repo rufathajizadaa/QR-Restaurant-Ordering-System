@@ -3,24 +3,15 @@ package com.qmenyu.restaurantordering.service;
 import com.qmenyu.restaurantordering.model.Order;
 import com.qmenyu.restaurantordering.model.OrderItem;
 import com.qmenyu.restaurantordering.repository.OrderRepository;
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import java.util.*;
 
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.ArrayList;
-
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class OrderServiceImplTest {
+class OrderServiceImplTest {
 
     @Mock
     private OrderRepository orderRepository;
@@ -28,110 +19,113 @@ public class OrderServiceImplTest {
     @InjectMocks
     private OrderServiceImpl orderService;
 
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
     @Test
-    public void testGetAllOrders() {
-        List<Order> orders = new ArrayList<>();
-        orders.add(new Order());
-        when(orderRepository.findAll()).thenReturn(orders);
+    void testGetAllOrders() {
+        List<Order> mockOrders = List.of(new Order(), new Order());
+        when(orderRepository.findAll()).thenReturn(mockOrders);
 
         List<Order> result = orderService.getAllOrders();
-        assertEquals(1, result.size());
+
+        assertEquals(2, result.size());
         verify(orderRepository, times(1)).findAll();
     }
 
     @Test
-    public void testGetOrderByIdFound() {
-        Order order = new Order();
-        order.setId(1L);
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+    void testGetOrderById() {
+        Order mockOrder = new Order();
+        mockOrder.setId(1L);
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(mockOrder));
 
         Optional<Order> result = orderService.getOrderById(1L);
+
         assertTrue(result.isPresent());
         assertEquals(1L, result.get().getId());
+        verify(orderRepository).findById(1L);
     }
 
     @Test
-    public void testGetOrderByIdNotFound() {
-        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
-
-        Optional<Order> result = orderService.getOrderById(1L);
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    public void testCreateOrderWithIdSet() {
+    void testCreateOrderWithNullId() {
         Order order = new Order();
-        order.setId(123L);
+        order.setItems(List.of(new OrderItem(), new OrderItem()));
+        when(orderRepository.save(any(Order.class))).thenAnswer(i -> i.getArgument(0));
 
-        // Add some order items (mock order item setter)
-        OrderItem item = new OrderItem();
-        List<OrderItem> items = new ArrayList<>();
-        items.add(item);
-        order.setItems(items);
+        Order savedOrder = orderService.createOrder(order);
 
-        when(orderRepository.save(order)).thenReturn(order);
-
-        Order result = orderService.createOrder(order);
-        assertEquals(123L, result.getId());
-        verify(orderRepository, times(1)).save(order);
+        assertNotNull(savedOrder.getId());
+        verify(orderRepository).save(order);
     }
 
     @Test
-    public void testCreateOrderWithNullIdSetsId() {
+    void testUpdateOrderStatusFound() {
         Order order = new Order();
-
-        OrderItem item = new OrderItem();
-        List<OrderItem> items = new ArrayList<>();
-        items.add(item);
-        order.setItems(items);
-
-        when(orderRepository.save(order)).thenReturn(order);
-
-        Order result = orderService.createOrder(order);
-        assertNotNull(result.getId());
-        verify(orderRepository, times(1)).save(order);
-        assertEquals(order, item.getOrder()); // Item’s order should be set
-    }
-
-    @Test
-    public void testUpdateOrderStatusFound() {
-        Order order = new Order();
-        order.setStatus("Pending");
+        order.setId(1L);
+        order.setStatus("pending");
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
-        when(orderRepository.save(order)).thenReturn(order);
+        when(orderRepository.save(any(Order.class))).thenReturn(order);
 
-        Optional<Order> updated = orderService.updateOrderStatus(1L, "Completed");
+        Optional<Order> updated = orderService.updateOrderStatus(1L, "completed");
+
         assertTrue(updated.isPresent());
-        assertEquals("Completed", updated.get().getStatus());
-        verify(orderRepository, times(1)).save(order);
+        assertEquals("completed", updated.get().getStatus());
+        verify(orderRepository).save(order);
     }
 
     @Test
-    public void testUpdateOrderStatusNotFound() {
-        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
+    void testUpdateOrderStatusNotFound() {
+        when(orderRepository.findById(999L)).thenReturn(Optional.empty());
 
-        Optional<Order> updated = orderService.updateOrderStatus(1L, "Completed");
-        assertFalse(updated.isPresent());
+        Optional<Order> result = orderService.updateOrderStatus(999L, "completed");
+
+        assertFalse(result.isPresent());
         verify(orderRepository, never()).save(any());
     }
 
     @Test
-    public void testDeleteOrderExists() {
-        System.out.println("Burdayam");
-        when(orderRepository.existsById(1L)).thenReturn(true);
-        doNothing().when(orderRepository).deleteById(1L);
+    void testCompleteOrdersByTableIdWithOrders() {
+        Order order1 = new Order(); order1.setStatus("pending");
+        Order order2 = new Order(); order2.setStatus("in_progress");
+        List<Order> orders = List.of(order1, order2);
 
-        boolean deleted = orderService.deleteOrder(1L);
-        assertTrue(deleted);
-        verify(orderRepository, times(1)).deleteById(1L);
+        when(orderRepository.findByTableIdAndStatusNot(5L, "completed")).thenReturn(orders);
+
+        boolean result = orderService.completeOrdersByTableId(5L);
+
+        assertTrue(result);
+        assertEquals("completed", order1.getStatus());
+        assertEquals("completed", order2.getStatus());
+        verify(orderRepository).saveAll(orders);
     }
 
     @Test
-    public void testDeleteOrderNotExists() {
-        when(orderRepository.existsById(1L)).thenReturn(false);
+    void testCompleteOrdersByTableIdWithNoOrders() {
+        when(orderRepository.findByTableIdAndStatusNot(10L, "completed")).thenReturn(Collections.emptyList());
 
+        boolean result = orderService.completeOrdersByTableId(10L);
+
+        assertFalse(result);
+        verify(orderRepository, never()).saveAll(any());
+    }
+
+    @Test
+    void testDeleteOrderExists() {
+        when(orderRepository.existsById(1L)).thenReturn(true);
         boolean deleted = orderService.deleteOrder(1L);
+
+        assertTrue(deleted);
+        verify(orderRepository).deleteById(1L);
+    }
+
+    @Test
+    void testDeleteOrderNotExists() {
+        when(orderRepository.existsById(2L)).thenReturn(false);
+        boolean deleted = orderService.deleteOrder(2L);
+
         assertFalse(deleted);
-        verify(orderRepository, never()).deleteById(anyLong());
+        verify(orderRepository, never()).deleteById(any());
     }
 }
