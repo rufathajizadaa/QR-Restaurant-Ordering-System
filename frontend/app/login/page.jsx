@@ -32,10 +32,9 @@ export default function LoginPage() {
             }
 
             // Step 2: GET /me
-            const meRes = await fetch('http://localhost:8080/me', {
+            const meRes = await fetch('http://localhost:8080/api/auth/me', {
                 credentials: 'include',
             });
-
             const contentType = meRes.headers.get('content-type');
             if (!meRes.ok || !contentType?.includes('application/json')) {
                 const errText = await meRes.text();
