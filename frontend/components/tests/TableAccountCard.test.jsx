@@ -5,7 +5,7 @@ import TableAccountCard from '../table-account-card'
 describe('TableAccountCard', () => {
   const orders = [
     { id: 1, createdAt: '2025-05-21T09:00:00Z', status: 'pending', items: [], total: 0 },
-    { id: 2, createdAt: '2025-05-21T09:05:00Z', status: 'ready',   items: [], total: 0 },
+    { id: 2, createdAt: '2025-05-21T09:05:00Z', status: 'ready', items: [], total: 0 },
   ]
   const onClose = jest.fn()
 
@@ -26,10 +26,8 @@ describe('TableAccountCard', () => {
     expect(screen.getByText(/2 orders/i)).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: /show details/i }))
-
-    // use getAllByText to avoid "multiple matches" errors
-    expect(screen.getAllByText(/Pending/i).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/Ready/i).length).toBeGreaterThan(0)
+    expect(screen.getByText(/Pending/i)).toBeInTheDocument()
+    expect(screen.getByText(/Ready/i)).toBeInTheDocument()
   })
 
   it('calls onCloseTable when confirmed', () => {

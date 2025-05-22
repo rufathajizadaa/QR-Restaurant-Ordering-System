@@ -33,11 +33,15 @@ export function OrderProvider({ children }) {
   // Update the addOrder function to include removedIngredients in the JSON
   const addOrder = async (orderData) => {
     try {
+      const now = new Date();
+      const bakuOffsetMs = 4 * 60 * 60 * 1000; // UTC+4 offset in milliseconds
+      const bakuTime = new Date(now.getTime() + bakuOffsetMs).toISOString();
+
       // Format the order data according to the expected structure
       const newOrder = {
         tableId: orderData.tableId,
         total: orderData.total,
-        createdAt: new Date().toISOString(),
+        createdAt: bakuTime,
         status: "pending",
         items: orderData.items.map((item) => ({
           itemId: item.itemId,

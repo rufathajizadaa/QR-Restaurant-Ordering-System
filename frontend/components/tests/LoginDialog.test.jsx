@@ -27,8 +27,7 @@ describe('LoginDialog', () => {
     render(<LoginDialog open={true} onOpenChange={onOpenChange} />)
     expect(screen.getByLabelText(/username/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
-    // match both the hidden <option> and the visible <span>
-    expect(screen.getAllByText(/kitchen staff/i).length).toBeGreaterThan(0)
+    expect(screen.getByText(/kitchen staff/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /login/i })).toBeEnabled()
   })
 
